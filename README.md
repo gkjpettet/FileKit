@@ -1,13 +1,14 @@
-FileSystem is a Xojo module for robustly handling classic framework `FolderItem` copying, deletion and moving. I created because the native FolderItem (and Xojo.IO.FolderItem) copy, move and delete methods are buggy. This is particularly true on Windows (especially Windows 10).  This module uses the `cp` and `mv` shell commands on Unix systems (macOS and Linux) and the `move` and `xcopy` commands on Windows.
+`FileSystem` is a Xojo module for robustly handling classic framework `FolderItem` copying, deletion and moving. I created it because the native `FolderItem` (and `Xojo.IO.FolderItem` for that matter) copy, move and delete methods are buggy. This is particularly true on Windows (especially Windows 10).  This module uses the `cp` and `mv` shell commands on Unix systems (macOS and Linux) and the `move` and `xcopy` commands on Windows.
 
 The repo contains a Xojo project with a demonstration window containing the `FileSystem` module.
 
 ## Usage
-Firstly copy the `FileSystem` module in the downloaded project into your own project. The module supports Mac, Windows, Linux and ARM web, desktop and console builds. It does not support iOS.
+
+Firstly copy the `FileSystem` module in the downloaded project to your own project. The module supports Mac, Windows, Linux and ARM web, desktop and console builds. It does **not** work on iOS.
 
 Before you use any of the module methods, you must call `FileSystem.Initialise`.
 
-The module includes a `Boolean` property (`safeMode`) which defaults to `True`. When `True`, the module will **not** delete a number of special folders. The list of the protected folders depends on the platform. See [Appendix 1](#app1) below for the list. If you set `FileSystem.safeMode = False` then the module will delete any folder or file on the drive (including the `root` folder) if requested. be very careful when using this mode!	
+The module includes a boolean property (`safeMode`) which defaults to `True`. When `True`, the module will **not** delete a number of special folders. The list of the protected folders depends on the platform. See [Appendix 1](#app1) below for the list. If you set `FileSystem.safeMode = False` then the module will delete any folder or file on the drive (including the `root` folder) if requested. Be very careful when using this mode!	
 
 ### Copying a file or folder
 To copy a file or folder you can use either the module method or the `FolderItem` extension:
@@ -17,7 +18,9 @@ result As FileSystem.Error = FileSystem.CopyTo(source As FolderItem, destination
 result As FileSystem.Error = folderItemVariable.CopyTo(destination As FolderItem, overwrite As Boolean)
 ```
 
-`source` may be either a file or a folder. `destination` must be a folder and must exist. `destination` refers to the folder that you want the copied file or folder to end up as child of. 
+The method returns an error code in the form of a `FileSystem.Error` enumeration. The list of error codes can be found in the [errors section](#errors).
+
+`source` may be either a file or a folder. `destination` must be a folder and must exist. `destination` refers to the folder that you want the copied file or folder to end up as a child of. 
 
 The `overwrite` parameter specifies what happens in the following scenarios:
 
@@ -32,6 +35,8 @@ result As FileSystem.Error = FileSystem.MoveTo(source As FolderItem, destination
 result As FileSystem.Error = folderItemVariable.MoveTo(destination As FolderItem, overwrite As Boolean)
 ```
 
+The method returns an error code in the form of a `FileSystem.Error` enumeration. The list of error codes can be found in the [errors section](#errors).
+
 `source` may be either a file or a folder. `destination` must be a folder and must exist. `destination` refers to the folder that you want to `source` to be moved **into**.
 
 The `overwrite` parameter specifies what happens in the following scenarios:
@@ -39,7 +44,9 @@ The `overwrite` parameter specifies what happens in the following scenarios:
 1. If `source` is a file and an identically named file exists as a child of the `destination` folder then the existing file in `destination` is deleted first and then the `source` file is moved to `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
 2. If `source` is a folder and an identically named folder exists as a child of the `destination` folder then the existing folder in `destination` is deleted first and the folder (and its contents) that is `source` are moved into `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
 
-##<a id="app1">Appendix 1</a>
+## <a id="errors">Errors</a>
+
+## <a id="app1">Appendix 1</a>
 Below a list of the system folders that will **never** be deleted by the `FileSystem` module if `FileSystem.safeMode = True`. 
 
 ### macOS
