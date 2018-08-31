@@ -4,8 +4,7 @@ Protected Module FileSystem
 		Protected Function CopyTo(Extends source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
 		  ' This method copies the source file or folder to the specified destination.
 		  ' `source` is the file or folder to copy.
-		  ' `destination` must be a folder. If it does not exist it will be created. If it does exist then it 
-		  ' will be deleted if `overwrite` is True. If it exists and `overwrite` is False then the copy is aborted.
+		  ' `destination` must be a folder and must exist. 
 		  
 		  ' Nil object checks.
 		  If source = Nil Then
@@ -113,8 +112,7 @@ Protected Module FileSystem
 		Protected Function MoveTo(Extends source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
 		  ' This method moves the source file or folder to the specified destination.
 		  ' `source` is the file or folder to move.
-		  ' `destination` must be a folder. If it does not exist it will be created. If it does exist then it 
-		  ' will be deleted if `overwrite` is True. If it exists and `overwrite` is False then the move is aborted.
+		  ' `destination` must be a folder.
 		  
 		  ' Nil object checks.
 		  If source = Nil Then
