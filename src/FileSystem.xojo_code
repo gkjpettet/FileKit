@@ -680,6 +680,15 @@ Protected Module FileSystem
 	#tag Constant, Name = kQuote, Type = String, Dynamic = False, Default = \"\"", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = kVersionBug, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = kVersionMajor, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = kVersionMinor, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
+	#tag EndConstant
+
 
 	#tag Enum, Name = Error, Type = Integer, Flags = &h1
 		None
