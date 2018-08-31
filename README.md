@@ -2,8 +2,7 @@
 
 The repo contains a Xojo project with a demonstration window containing the `FileSystem` module.
 
-## Usage
-
+## Usage
 Firstly copy the `FileSystem` module in the downloaded project to your own project. The module supports Mac, Windows, Linux and ARM web, desktop and console builds. It does **not** work on iOS.
 
 Before you use any of the module methods, you must call `FileSystem.Initialise`.
