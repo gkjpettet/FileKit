@@ -707,20 +707,20 @@ Protected Module FileSystem
 
 
 	#tag Enum, Name = Error, Type = Integer, Flags = &h1
-		None
-		  SourceIsNil
-		  SourceDoesNotExist
-		  DestinationIsNil
-		  DestinationDoesNotExist
-		  UnableToDeleteFolder
+		Aborted
 		  AttemptToDeleteProtectedFolderItem
-		  UnableToDeleteFile
-		  Unknown
-		  Aborted
-		  UnableToCreateDestinationFolder
-		  XcopyDiskWriteError
 		  CpError
-		MoveError
+		  DestinationDoesNotExist
+		  DestinationIsNil
+		  MoveError
+		  None
+		  SourceDoesNotExist
+		  SourceIsNil
+		  UnableToCreateDestinationFolder
+		  UnableToDeleteFile
+		  UnableToDeleteFolder
+		  Unknown
+		XcopyDiskWriteError
 	#tag EndEnum
 
 
