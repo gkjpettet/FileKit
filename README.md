@@ -43,6 +43,18 @@ The `overwrite` parameter specifies what happens in the following scenarios:
 1. If `source` is a file and an identically named file exists as a child of the `destination` folder then the existing file in `destination` is deleted first and then the `source` file is moved to `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
 2. If `source` is a folder and an identically named folder exists as a child of the `destination` folder then the existing folder in `destination` is deleted first and the `source` folder (and its contents) are moved into `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
 
+### Deleting a file or folder
+To delete a file or folder you can use either the module method or the `FolderItem` extension:
+
+```language-xojo
+result As Integer = FileSystem.ReallyDelete(what As FolderItem, safeMode As Boolean = True)
+result As Integer = folderItemVariable.ReallyDelete(what As FolderItem, safeMode As Boolean = True)
+``` 
+
+The method returns the Xojo `FolderItem.LastErrorCode` for the deletion attempt. If everything goes smoothly then it will return `FolderItem.NoError` (0).
+
+If the optional `safeMode` is `True` then the method will **not** delete a number of special folders. The list of the protected folders depends on the platform. See [Appendix 1](#app1) below for the list. Setting this method parameter has no effect on the `FileSystem.safeMode` property.
+
 ## <a id="errors">Errors</a>
 
 ## <a id="app1">Appendix 1</a>
