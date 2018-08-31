@@ -110,6 +110,107 @@ Protected Module FileSystem
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function MoveTo(Extends source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
+		  ' This method moves the source file or folder to the specified destination.
+		  ' `source` is the file or folder to move.
+		  ' `destination` must be a folder. If it does not exist it will be created. If it does exist then it 
+		  ' will be deleted if `overwrite` is True. If it exists and `overwrite` is False then the move is aborted.
+		  
+		  ' Nil object checks.
+		  If source = Nil Then
+		    Return Error.SourceIsNil
+		  ElseIf destination = Nil Then
+		    Return Error.DestinationIsNil
+		  End If
+		  
+		  ' Do `source` and `destination` exist?
+		  If Not source.Exists Then Return Error.SourceDoesNotExist
+		  If Not destination.Exists Then Return Error.DestinationDoesNotExist
+		  
+		  Dim count, i As Integer
+		  Dim item As FolderItem
+		  
+		  ' Move a file
+		  ' -----------
+		  If source.Directory= False Then
+		    
+		    ' Does destination contain a file with the same name as `source`?
+		    count = destination.Count
+		    For i = 1 To count
+		      item = destination.Item(i)
+		      If Not item.Directory And item.Name = source.Name Then
+		        ' Destination contains an identically named file. Should we overwrite?
+		        If overwrite Then ' Yes.
+		          Try
+		            If item.ReallyDelete(safeMode) <> 0 Then Return Error.UnableToDeleteFile
+		            Exit
+		          Catch err
+		            If safeMode Then
+		              Return Error.AttemptToDeleteProtectedFolderItem
+		            Else
+		              Return Error.UnableToDeleteFile
+		            End If
+		          End Try
+		        Else ' Do not overwrite the existing file - abort.
+		          Return Error.Aborted
+		        End If
+		      End If
+		    Next i
+		    
+		    ' At this point, we are moving a file to a valid destination folder and we are sure there is 
+		    ' not a file at this destination with the same name. All that's left to do is move the file.
+		    #If TargetWindows
+		      Return WindowsMoveFile(source, destination)
+		    #Else
+		      Return UnixMoveFile(source, destination)
+		    #EndIf
+		    
+		  End If
+		  
+		  ' Move a folder
+		  ' -------------
+		  If source.Directory Then
+		    
+		    ' Does destination contain a folder with the same name as `source`?
+		    count = destination.Count
+		    For i = 1 To count
+		      item = destination.Item(i)
+		      If item.Directory And item.Name = source.Name Then
+		        ' Destination contains an identically named folder. Should we overwrite?
+		        If overwrite Then ' Yes.
+		          Try
+		            If item.ReallyDelete(safeMode) <> 0 Then Return Error.UnableToDeleteFolder
+		            Exit
+		          Catch err
+		            If safeMode Then
+		              Return Error.AttemptToDeleteProtectedFolderItem
+		            Else
+		              Return Error.UnableToDeleteFolder
+		            End If
+		          End Try
+		        Else ' Do not overwrite the existing folder - abort.
+		          Return Error.Aborted
+		        End If
+		      End If
+		    Next i
+		    
+		    ' At this point, we are moving a folder to a valid destination folder and we are sure there is 
+		    ' not a folder at this destination with the same name. All that's left to do is move the folder.
+		    #If TargetWindows
+		      Return WindowsMoveFolder(source, destination)
+		    #Else
+		      Return UnixMoveFolder(source, destination)
+		    #EndIf
+		    
+		  End If
+		  
+		  ' If we've got here something went wrong.
+		  Return Error.Unknown
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ReallyDelete(Extends what As FolderItem, safeMode As Boolean = True) As Integer
 		  ' Returns an error code if it fails, or zero if the folder was deleted successfully.
 		  
@@ -280,6 +381,8 @@ Protected Module FileSystem
 		    Return "Destination does not exist"
 		  Case Error.DestinationIsNil
 		    Return "Destination is Nil"
+		  Case Error.MoveError
+		    Return "move command error"
 		  Case Error.None
 		    Return "None"
 		  Case Error.SourceDoesNotExist
@@ -367,9 +470,70 @@ Protected Module FileSystem
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function UnixMoveFile(file As FolderItem, destination As FolderItem) As Error
+		  ' macOS and Linux only.
+		  ' Moves the `source` file to the `destination` folder using the shell and the `mv` command.
+		  ' `source` is the file to move.
+		  ' `destination` specifies the folder that will become the parent of `source`.
+		  
+		  ' The method assumes that checks have already been made for the following conditions:
+		  ' `source` <> Nil and `source` exists
+		  ' `destination` <> Nil and `destination` exists and `destination` does NOT contain an identically 
+		  ' named file as `source`.
+		  
+		  ' To determine the destination path, we need to append the file's name to it.
+		  Dim destinationPath As String = destination.NativePath
+		  If destinationPath.Right(1) <> "/" Then destinationPath = destinationPath + "/"
+		  destinationPath = destinationPath + file.Name
+		  
+		  ' Use `mv` to do the moving.
+		  Dim s As New Shell
+		  s.Mode = 0
+		  Dim command As String = "mv -f " + kQuote + file.NativePath + kQuote + " " + _
+		  kQuote + destinationPath + kQuote
+		  s.Execute(command)
+		  
+		  ' Return mv's error code (if any).
+		  If s.ErrorCode = 0 Then
+		    Return Error.None
+		  Else
+		    Return Error.MoveError
+		  End
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UnixMoveFolder(folder As FolderItem, destination As FolderItem) As Error
+		  ' macOS and Linux only..
+		  ' Moves the `source` folder to the `destination` folder using the shell and the `mv` command.
+		  ' `source` is the folder to move.
+		  ' `destination` specifies the folder that will become the parent of `source`.
+		  
+		  ' The method assumes that checks have already been made for the following conditions:
+		  ' `source` <> Nil and `source` exists
+		  ' `destination` <> Nil and `destination` exists and `destination` is a folder and 
+		  ' `destination` does NOT contain an identically named folder as `source`.
+		  
+		  ' Use `mv` to do the moving.
+		  Dim s As New Shell
+		  s.Mode = 0
+		  Dim command As String = "mv -f " + kQuote + folder.NativePath + kQuote + " " + _
+		  kQuote + destination.NativePath + kQuote
+		  s.Execute(command)
+		  
+		  ' Return mv's error code (if any).
+		  If s.ErrorCode = 0 Then
+		    Return Error.None
+		  Else
+		    Return Error.MoveError
+		  End
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function WindowsCopyFile(file As FolderItem, destination As FolderItem) As Error
 		  ' Windows-only.
-		  ' Copies the `source` file to the `destination` folder using the shell and the `xcopy.exe` command.
+		  ' Copies the `source` file to the `destination` folder using the shell and the `xcopy` command.
 		  ' `source` is the file to copy.
 		  ' `destination` specifies the folder that will become the parent of `source`.
 		  
@@ -399,7 +563,7 @@ Protected Module FileSystem
 	#tag Method, Flags = &h21
 		Private Function WindowsCopyFolder(folder As FolderItem, destination As FolderItem) As Error
 		  ' Windows-only.
-		  ' Copies the `source` folder to the `destination` folder using the shell and the `xcopy.exe` command.
+		  ' Copies the `source` folder to the `destination` folder using the shell and the `xcopy` command.
 		  ' `source` is the folder to copy.
 		  ' `destination` specifies the folder that will become the parent of `source`.
 		  
@@ -439,6 +603,66 @@ Protected Module FileSystem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function WindowsMoveFile(file As FolderItem, destination As FolderItem) As Error
+		  ' Windows-only.
+		  ' Moves the `source` file to the `destination` folder using the shell and the `move` command.
+		  ' `source` is the file to move.
+		  ' `destination` specifies the folder that will become the parent of `source`.
+		  
+		  ' The method assumes that checks have already been made for the following conditions:
+		  ' `source` <> Nil and `source` exists
+		  ' `destination` <> Nil and `destination` exists and `destination` does NOT contain an identically 
+		  ' named file as `source`.
+		  
+		  ' Use the `move` command to actually move the file.
+		  Dim s As New Shell
+		  s.Mode = 0
+		  Dim command As String = "move /Y " + kQuote + file.NativePath + kQuote + " " + _
+		  kQuote + destination.NativePath + kQuote
+		  s.Execute(command)
+		  
+		  ' Return move's error code (if any).
+		  If s.ErrorCode = 0 Then
+		    Return Error.None
+		  Else
+		    Return Error.MoveError
+		  End
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function WindowsMoveFolder(folder As FolderItem, destination As FolderItem) As Error
+		  ' Windows-only.
+		  ' Moves the `source` folder to the `destination` folder using the shell and the `move` command.
+		  ' `source` is the folder to move.
+		  ' `destination` specifies the folder that will become the parent of `source`.
+		  
+		  ' The method assumes that checks have already been made for the following conditions:
+		  ' `source` <> Nil and `source` exists
+		  ' `destination` <> Nil and `destination` exists and `destination` is a folder and 
+		  ' `destination` does NOT contain an identically named folder as `source`.
+		  
+		  ' Make sure that the source folder path does NOT have a trailing slash.
+		  Dim sourcePath As String = folder.NativePath
+		  If sourcePath.Right(1) = "\" Then sourcePath = sourcePath.Left(sourcePath.Len - 1)
+		  
+		  ' Use the `move` command to actually move the folder.
+		  Dim s As New Shell
+		  s.Mode = 0
+		  Dim command As String = "move /Y " + kQuote + sourcePath + kQuote + " " + _
+		  kQuote + destination.NativePath + kQuote
+		  s.Execute(command)
+		  
+		  ' Return move's error code (if any).
+		  If s.ErrorCode = 0 Then
+		    Return Error.None
+		  Else
+		    Return Error.MoveError
+		  End
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mInitialised As Boolean = False
@@ -470,7 +694,8 @@ Protected Module FileSystem
 		  Aborted
 		  UnableToCreateDestinationFolder
 		  XcopyDiskWriteError
-		CpError
+		  CpError
+		MoveError
 	#tag EndEnum
 
 

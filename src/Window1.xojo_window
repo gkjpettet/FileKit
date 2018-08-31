@@ -518,6 +518,8 @@ End
 #tag Events BtnMove
 	#tag Event
 		Sub Action()
+		  Using FileSystem
+		  
 		  If source = Nil Then
 		    TxtAOutput.Text = TxtAOutput.Text + "source = Nil" + EndOfLine
 		    Return
@@ -530,7 +532,18 @@ End
 		  
 		  Dim overwrite As Boolean = CheckBoxOverwrite.Value
 		  
-		  #Pragma Warning "TODO"
+		  TxtAOutput.Text = TxtAOutput.Text + "Attempting to move " + source.NativePath + " to " + _
+		  destination.NativePath + " (overwrite = " + If(overwrite, "True", "False") + ")" + EndOfLine
+		  
+		  Dim e As FileSystem.Error
+		  e = source.MoveTo(destination, overwrite)
+		  If e = FileSystem.Error.None Then
+		    TxtAOutput.Text = TxtAOutput.Text + "Move successful" + EndOfLine
+		  ElseIf e = FileSystem.Error.Aborted Then
+		    TxtAOutput.Text = TxtAOutput.Text + "Move aborted. " + EndOfLine
+		  Else
+		    TxtAOutput.Text = TxtAOutput.Text + "Move failed. " + e.ToString + EndOfLine
+		  End If
 		  
 		End Sub
 	#tag EndEvent
