@@ -2,6 +2,12 @@
 Protected Module FileSystem
 	#tag Method, Flags = &h1
 		Protected Function CopyTo(Extends source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
+		  Return CopyTo(source, destination, overwrite)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CopyTo(source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
 		  ' This method copies the source file or folder to the specified destination.
 		  ' `source` is the file or folder to copy.
 		  ' `destination` must be a folder and must exist. 
@@ -110,6 +116,12 @@ Protected Module FileSystem
 
 	#tag Method, Flags = &h1
 		Protected Function MoveTo(Extends source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
+		  Return MoveTo(source, destination, overwrite)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function MoveTo(source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
 		  ' This method moves the source file or folder to the specified destination.
 		  ' `source` is the file or folder to move.
 		  ' `destination` must be a folder.
@@ -210,6 +222,12 @@ Protected Module FileSystem
 
 	#tag Method, Flags = &h1
 		Protected Function ReallyDelete(Extends what As FolderItem, safeMode As Boolean = True) As Integer
+		  Return ReallyDelete(what, safeMode)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ReallyDelete(what As FolderItem, safeMode As Boolean = True) As Integer
 		  ' Returns an error code if it fails, or zero if the folder was deleted successfully.
 		  
 		  If Not mInitialised Then Initialise
