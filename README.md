@@ -51,7 +51,7 @@ result As Integer = FileSystem.ReallyDelete(what As FolderItem, safeMode As Bool
 result As Integer = folderItemVariable.ReallyDelete(what As FolderItem, safeMode As Boolean = True)
 ``` 
 
-The method returns the Xojo `FolderItem.LastErrorCode` for the deletion attempt. If everything goes smoothly then it will return `FolderItem.NoError` (0).
+The method returns the Xojo `FolderItem.LastErrorCode` for the deletion attempt. If everything goes smoothly then it will return `FolderItem.NoError`.
 
 If the optional `safeMode` is `True` then the method will **not** delete a number of special folders. The list of the protected folders depends on the platform. See [Appendix 1](#app1) below for the list. Setting this method parameter has no effect on the `FileSystem.safeMode` property.
 
