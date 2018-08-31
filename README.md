@@ -24,7 +24,7 @@ The method returns an error code in the form of a `FileSystem.Error` enumeration
 The `overwrite` parameter specifies what happens in the following scenarios:
 
 1. If `source` is a file and an identically named file exists as a child of the `destination` folder then the existing file in `destination` is deleted first and then the `source` file is copied to `destination` if `overwrite` is `True`. If `overwrite` is `False` then the copy is aborted.
-2. If `source` is a folder and an identically named folder exists as a child of the `destination` folder then the existing folder in `destination` is deleted first and the folder (and its contents) that is `source` are recursively copied into `destination` if `overwrite` is `True`. If `overwrite` is `False` then the copy is aborted.
+2. If `source` is a folder and an identically named folder exists as a child of the `destination` folder then the existing folder in `destination` is deleted first and the `source` folder (and its contents) are recursively copied into `destination` if `overwrite` is `True`. If `overwrite` is `False` then the copy is aborted.
 
 ### Moving a file or folder
 To move a file or folder you can use either the module method or the `FolderItem` extension:
@@ -41,7 +41,7 @@ The method returns an error code in the form of a `FileSystem.Error` enumeration
 The `overwrite` parameter specifies what happens in the following scenarios:
 
 1. If `source` is a file and an identically named file exists as a child of the `destination` folder then the existing file in `destination` is deleted first and then the `source` file is moved to `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
-2. If `source` is a folder and an identically named folder exists as a child of the `destination` folder then the existing folder in `destination` is deleted first and the folder (and its contents) that is `source` are moved into `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
+2. If `source` is a folder and an identically named folder exists as a child of the `destination` folder then the existing folder in `destination` is deleted first and the `source` folder (and its contents) are moved into `destination` if `overwrite` is `True`. If `overwrite` is `False` then the move is aborted.
 
 ## <a id="errors">Errors</a>
 
