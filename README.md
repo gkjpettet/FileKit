@@ -56,6 +56,30 @@ The method returns the Xojo `FolderItem.LastErrorCode` for the deletion attempt.
 If the optional `safeMode` is `True` then the method will **not** delete a number of special folders. The list of the protected folders depends on the platform. See [Appendix 1](#app1) below for the list. Setting this method parameter has no effect on the `FileSystem.safeMode` property.
 
 ## <a id="errors">Errors</a>
+The `FileSystem` module reports errors by way of the `FileSystem.Error` enumeration. The possible values are:
+
+- `Aborted`
+- `AttemptToDeleteProtectedFolderItem`
+- `CpError` (occurs when an error is encountered during a Unix copying)
+- `DestinationDoesNotExist`
+- `DestinationIsNil`
+- `MoveError`
+- `None`
+- `SourceDoesNotExist`
+- `SourceIsNil`
+- `UnableToCreateDestinationFolder`
+- `UnableToDeleteFile`
+- `UnableToDeleteFolder`
+- `Unknown`
+- `XcopyDiskWriteError`
+
+A extension method on the enumeration is provided for convenience for error reporting in your apps:
+
+```language-xojo
+Using FileSystem
+Dim e As FileSystem.Error = someFolderItem.CopyTo(someDestination, False)
+MsgBox(e.ToString)
+```
 
 ## <a id="app1">Appendix 1</a>
 Below a list of the system folders that will **never** be deleted by the `FileSystem` module if `FileSystem.safeMode = True`. 
