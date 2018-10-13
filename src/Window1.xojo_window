@@ -484,7 +484,7 @@ End
 #tag Events BtnCopy
 	#tag Event
 		Sub Action()
-		  Using FileSystem
+		  Using FileKit
 		  
 		  If source = Nil Then
 		    TxtAOutput.Text = TxtAOutput.Text + "source = Nil" + EndOfLine
@@ -501,11 +501,11 @@ End
 		  TxtAOutput.Text = TxtAOutput.Text + "Attempting to copy " + source.NativePath + " to " + _
 		  destination.NativePath + " (overwrite = " + If(overwrite, "True", "False") + ")" + EndOfLine
 		  
-		  Dim e As FileSystem.Error
+		  Dim e As FileKit.Error
 		  e = source.CopyTo(destination, overwrite)
-		  If e = FileSystem.Error.None Then
+		  If e = FileKit.Error.None Then
 		    TxtAOutput.Text = TxtAOutput.Text + "Copy successful" + EndOfLine
-		  ElseIf e = FileSystem.Error.Aborted Then
+		  ElseIf e = FileKit.Error.Aborted Then
 		    TxtAOutput.Text = TxtAOutput.Text + "Copy aborted. " + EndOfLine
 		  Else
 		    TxtAOutput.Text = TxtAOutput.Text + "Copy failed. " + e.ToString + EndOfLine
@@ -518,7 +518,7 @@ End
 #tag Events BtnMove
 	#tag Event
 		Sub Action()
-		  Using FileSystem
+		  Using FileKit
 		  
 		  If source = Nil Then
 		    TxtAOutput.Text = TxtAOutput.Text + "source = Nil" + EndOfLine
@@ -535,11 +535,11 @@ End
 		  TxtAOutput.Text = TxtAOutput.Text + "Attempting to move " + source.NativePath + " to " + _
 		  destination.NativePath + " (overwrite = " + If(overwrite, "True", "False") + ")" + EndOfLine
 		  
-		  Dim e As FileSystem.Error
+		  Dim e As FileKit.Error
 		  e = source.MoveTo(destination, overwrite)
-		  If e = FileSystem.Error.None Then
+		  If e = FileKit.Error.None Then
 		    TxtAOutput.Text = TxtAOutput.Text + "Move successful" + EndOfLine
-		  ElseIf e = FileSystem.Error.Aborted Then
+		  ElseIf e = FileKit.Error.Aborted Then
 		    TxtAOutput.Text = TxtAOutput.Text + "Move aborted. " + EndOfLine
 		  Else
 		    TxtAOutput.Text = TxtAOutput.Text + "Move failed. " + e.ToString + EndOfLine

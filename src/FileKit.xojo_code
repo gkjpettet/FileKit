@@ -1,5 +1,5 @@
 #tag Module
-Protected Module FileSystem
+Protected Module FileKit
 	#tag Method, Flags = &h1
 		Protected Function CopyTo(Extends source As FolderItem, destination As FolderItem, overwrite As Boolean = False) As Error
 		  Return CopyTo(source, destination, overwrite)
@@ -385,7 +385,7 @@ Protected Module FileSystem
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ToString(Extends e As FileSystem.Error) As String
+		Protected Function ToString(Extends e As FileKit.Error) As String
 		  Select Case e
 		  Case Error.Aborted
 		    Return "Aborted"

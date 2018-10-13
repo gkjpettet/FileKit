@@ -3,7 +3,7 @@ Protected Class App
 Inherits Application
 	#tag Event
 		Sub Open()
-		  FileSystem.Initialise
+		  FileKit.Initialise
 		End Sub
 	#tag EndEvent
 
