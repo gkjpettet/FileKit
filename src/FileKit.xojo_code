@@ -29,14 +29,12 @@ Protected Module FileKit
 		  If Not source.Exists Then Return Errors.SourceDoesNotExist
 		  If Not destination.Exists Then Return Errors.DestinationDoesNotExist
 		  
-		  Var item As FolderItem
+		  'Var item As FolderItem
 		  
 		  // Copy a file
 		  If source.IsFolder = False Then
 		    // Does destination contain a file with the same name as `source`?
-		    Var iMax As Integer = destination.Count - 1
-		    For i As Integer = 0 To iMax
-		      item = destination.ChildAt(i)
+		    For Each item As FolderItem In destination.Children
 		      If Not item.IsFolder And item.Name = source.Name Then
 		        // Destination contains an identically named file. Should we overwrite?
 		        If overwrite Then // Yes.
@@ -54,7 +52,7 @@ Protected Module FileKit
 		          Return Errors.Aborted
 		        End If
 		      End If
-		    Next i
+		    Next item
 		    
 		    // At this point, we are copying a file to a valid destination folder and we are sure there is 
 		    // not a file at this destination with the same name. All that's left is to do the file copy.
@@ -69,9 +67,7 @@ Protected Module FileKit
 		  // Copy a folder.
 		  If source.IsFolder Then
 		    // Does destination contain a folder with the same name as `source`?
-		    Var iMax As Integer = destination.Count - 1
-		    For i As Integer = 0 To iMax
-		      item = destination.ChildAt(i)
+		    For Each item As FolderItem In destination.Children
 		      If item.IsFolder And item.Name = source.Name Then
 		        // Destination contains an identically named folder. Should we overwrite?
 		        If overwrite Then // Yes.
@@ -89,7 +85,7 @@ Protected Module FileKit
 		          Return Errors.Aborted
 		        End If
 		      End If
-		    Next i
+		    Next item
 		    
 		    // At this point, we are copying a folder to a valid destination folder and we are sure there is 
 		    // not a folder at this destination with the same name. All that's left is to do the folder copy.
@@ -715,15 +711,6 @@ Protected Module FileKit
 		Protected SafeMode As Boolean = True
 	#tag EndProperty
 
-
-	#tag Constant, Name = kVersionBug, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = kVersionMajor, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = kVersionMinor, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
-	#tag EndConstant
 
 	#tag Constant, Name = QUOTE, Type = String, Dynamic = False, Default = \"\"", Scope = Private
 	#tag EndConstant
