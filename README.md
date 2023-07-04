@@ -5,8 +5,6 @@ The repo contains a Xojo project with a demonstration window containing the `Fil
 ## Usage
 Firstly copy the `FileKit` module in the downloaded project to your own project. The module supports Mac, Windows, Linux and ARM web, desktop and console builds. It does **not** work on iOS.
 
-Before you use any of the module methods, you must call `FileKit.Initialise`.
-
 The module includes a boolean property (`safeMode`) which defaults to `True`. When `True`, the module will **not** delete a number of special folders. The list of the protected folders depends on the platform. See [Appendix 1](#app1) below for the list. If you set `FileKit.safeMode = False` then the module will delete any folder or file on the drive (including the `root` folder) if requested. Be very careful when using this mode!	
 
 ### Copying a file or folder
